@@ -7,6 +7,7 @@ import java.util.Scanner;
 
 import fr.diginamic.recensement.entites.Recensement;
 import fr.diginamic.recensement.entites.Ville;
+import fr.diginamic.recensement.exceptions.CodeException;
 import fr.diginamic.recensement.services.comparators.EnsemblePopComparateur;
 
 /**
@@ -19,14 +20,19 @@ import fr.diginamic.recensement.services.comparators.EnsemblePopComparateur;
 public class RechercheVillesPlusPeupleesRegion extends MenuService {
 
 	@Override
-	public void traiter(Recensement recensement, Scanner scanner) {
+	public void traiter(Recensement recensement, Scanner scanner) throws CodeException {
 
 		System.out.println("Veuillez saisir un nom de région:");
 		String nomRegion = scanner.nextLine();
+		boolean regionTrouvee = false;
 
 		System.out.println("Veuillez saisir un nombre de villes:");
 		String nbVillesStr = scanner.nextLine();
 		int nbVilles = Integer.parseInt(nbVillesStr);
+
+		if(nbVilles <= 0) {
+			throw new CodeException("Le nombre saisie ne peut être négatif ou égal à 0 !");
+		}
 
 		List<Ville> villesRegions = new ArrayList<Ville>();
 
@@ -34,7 +40,17 @@ public class RechercheVillesPlusPeupleesRegion extends MenuService {
 		for (Ville ville : villes) {
 			if (ville.getNomRegion().toLowerCase().startsWith(nomRegion.toLowerCase())) {
 				villesRegions.add(ville);
+				regionTrouvee = true;
 			}
+		}
+
+
+		if(!regionTrouvee) {
+			throw new CodeException("Cette région n'exite pas !");
+		}
+
+		if(nbVilles > villesRegions.size()) {
+			throw new CodeException("Il n'y a pas autant de ville dans cete région !");
 		}
 
 		Collections.sort(villesRegions, new EnsemblePopComparateur(false));

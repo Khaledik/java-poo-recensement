@@ -10,6 +10,7 @@ import java.util.Scanner;
 import fr.diginamic.recensement.entites.Departement;
 import fr.diginamic.recensement.entites.Recensement;
 import fr.diginamic.recensement.entites.Ville;
+import fr.diginamic.recensement.exceptions.CodeException;
 import fr.diginamic.recensement.services.comparators.EnsemblePopComparateur;
 
 /**
@@ -21,11 +22,15 @@ import fr.diginamic.recensement.services.comparators.EnsemblePopComparateur;
 public class RechercheDepartementsPlusPeuplees extends MenuService {
 
 	@Override
-	public void traiter(Recensement recensement, Scanner scanner) {
+	public void traiter(Recensement recensement, Scanner scanner) throws CodeException {
 
 		System.out.println("Veuillez saisir un nombre de départements:");
 		String nbDeptsStr = scanner.nextLine();
 		int nbDepts = Integer.parseInt(nbDeptsStr);
+
+		if(nbDepts <= 0) {
+			throw new CodeException("Le nombre de départements saisie ne peut être égal ou inférieur à 0 !");
+		}
 
 		List<Ville> villes = recensement.getVilles();
 		Map<String, Departement> mapDepts = new HashMap<>();
@@ -42,6 +47,10 @@ public class RechercheDepartementsPlusPeuplees extends MenuService {
 
 		List<Departement> departements = new ArrayList<Departement>();
 		departements.addAll(mapDepts.values());
+
+		if(nbDepts > departements.size()) {
+			throw new CodeException("Il n'y a pas autant de départements en france !");
+		}
 
 		Collections.sort(departements, new EnsemblePopComparateur(false));
 

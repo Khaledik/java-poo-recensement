@@ -10,6 +10,7 @@ import java.util.Scanner;
 import fr.diginamic.recensement.entites.Recensement;
 import fr.diginamic.recensement.entites.Region;
 import fr.diginamic.recensement.entites.Ville;
+import fr.diginamic.recensement.exceptions.CodeException;
 import fr.diginamic.recensement.services.comparators.EnsemblePopComparateur;
 
 /**
@@ -21,11 +22,15 @@ import fr.diginamic.recensement.services.comparators.EnsemblePopComparateur;
 public class RechercheRegionsPlusPeuplees extends MenuService {
 
 	@Override
-	public void traiter(Recensement recensement, Scanner scanner) {
+	public void traiter(Recensement recensement, Scanner scanner) throws CodeException {
 
 		System.out.println("Veuillez saisir un nombre de régions:");
 		String nbRegionsStr = scanner.nextLine();
 		int nbRegions = Integer.parseInt(nbRegionsStr);
+
+		if (nbRegions <= 0) {
+			throw new CodeException("Le nombre de régions saisie ne peut être égal ou inférieur à 0 !");
+		}
 
 		// On récupére la liste des villes du recensement
 		List<Ville> villes = recensement.getVilles();
@@ -55,6 +60,10 @@ public class RechercheRegionsPlusPeuplees extends MenuService {
 		// la HashMap pour les mettre dans une liste
 		List<Region> regions = new ArrayList<Region>();
 		regions.addAll(mapRegions.values());
+
+		if(nbRegions > regions.size()) {
+			throw new CodeException("Il n'y a pas autant de régions en france !");
+		}
 
 		// On créé un comparateur de Region pour trier la liste des régions dans l'ordre
 		// de populations décroissantes.
